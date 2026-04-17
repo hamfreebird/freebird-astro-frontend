@@ -1,0 +1,61 @@
+---
+// src/pages/posts/[slug].astro
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { ListPostsResponse, PostDetail } from '../../types/api.ts';
+
+export async function getStaticPaths() {
+    const API_BASE = import.meta.env.PUBLIC_API_BASE_URL || 'http://localhost:3001';
+    const response = await fetch(`${API_BASE}/api/posts`);
+    const data = (await response.json()) as ListPostsResponse;
+    const posts = data.posts || [];
+
+    return posts.map((post) => ({
+        params: { slug: post.slug },
+        props: { post },
+    }));
+}
+
+const { post } = Astro.props;
+
+// 二次请求详情 API 获取完整内容
+const detailRes = await fetch(`http://localhost:3001/api/posts/${post.slug}`);
+const fullPost = (await detailRes.json()) as PostDetail;
+---
+
+<BaseLayout title={fullPost.title}>
+    <article class="post">
+        <h1>{fullPost.title}</h1>
+        <p class="meta">
+            发布于 {new Date(fullPost.published_at).toLocaleDateString('zh-CN')}
+            {fullPost.updated_at && fullPost.updated_at !== fullPost.published_at && (
+                    <span> · 更新于 {new Date(fullPost.updated_at).toLocaleDateString('zh-CN')}</span>
+            )}
+        </p>
+        <div class="content" set:html={fullPost.content} />
+    </article>
+</BaseLayout>
+
+<style>
+    .post {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+    .meta {
+        color: #666;
+        font-size: 0.9rem;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+    }
+    .content :global(h2) {
+        margin-top: 2rem;
+    }
+    .content :global(p) {
+        line-height: 1.8;
+    }
+    .content :global(pre) {
+        background: #f4f4f4;
+        padding: 1rem;
+        overflow-x: auto;
+    }
+</style>

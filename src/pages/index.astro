@@ -1,7 +1,46 @@
 ---
+// src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
-const pageTitle = "首页";
+import type { ListPostsResponse } from '../types/api.ts';
+
+const API_BASE = import.meta.env.PUBLIC_API_BASE_URL || 'http://localhost:3001';
+const response = await fetch(`${API_BASE}/api/posts`);
+const data = await response.json();
+const posts = data.posts || [];
 ---
-<BaseLayout pageTitle={pageTitle}>
-	<h2>我超棒的博客副标题</h2>
+
+<BaseLayout title="首页">
+	<h1>最新文章</h1>
+	<ul class="post-list">
+		{posts.map((post) => (
+			<li>
+				<article>
+					<h2>
+						<a href={`/posts/${post.slug}`}>{post.title}</a>
+					</h2>
+					<p class="meta">
+						{new Date(post.published_at).toLocaleDateString('zh-CN')}
+					</p>
+					<p class="excerpt">{post.excerpt}</p>
+				</article>
+			</li>
+		))}
+	</ul>
 </BaseLayout>
+
+<style>
+	.post-list {
+		list-style: none;
+		padding: 0;
+	}
+	.post-list li {
+		margin-bottom: 2.5rem;
+	}
+	.meta {
+		color: #666;
+		font-size: 0.9rem;
+	}
+	.excerpt {
+		margin-top: 0.5rem;
+	}
+</style>

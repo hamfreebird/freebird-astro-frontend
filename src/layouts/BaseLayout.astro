@@ -1,24 +1,35 @@
 ---
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import '../styles/global.css';
-const { pageTitle } = Astro.props;
+// src/layouts/BaseLayout.astro
+export interface Props {
+    title: string;
+    description?: string;
+}
+
+const { title, description = "技术博客，分享 Rust 与 Web 开发心得" } = Astro.props;
 ---
+
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | 我的技术博客</title>
+    <meta name="description" content={description} />
+    <link rel="stylesheet" href="/styles/global.css" />
 </head>
 <body>
-<Header />
-<h1>{pageTitle}</h1>
-<slot />
-<Footer />
-<script>
-    import "../scripts/menu.js";
-</script>
+<header>
+    <nav>
+        <a href="/">首页</a>
+        <a href="/archive">归档</a>
+        <a href="/about">关于</a>
+    </nav>
+</header>
+<main>
+    <slot />
+</main>
+<footer>
+    <p>© 2026 我的技术博客 · Powered by Rust + Astro</p>
+</footer>
 </body>
 </html>
