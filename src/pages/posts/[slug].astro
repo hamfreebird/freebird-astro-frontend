@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import type { ListPostsResponse, PostDetail } from '../../types/api.ts';
 
 export async function getStaticPaths() {
-    const API_BASE = import.meta.env.PUBLIC_API_BASE_URL || 'http://localhost:3001';
+    const API_BASE = import.meta.env.PUBLIC_API_BASE_URL;
     const response = await fetch(`${API_BASE}/api/posts`);
     const data = (await response.json()) as ListPostsResponse;
     const posts = data.posts || [];

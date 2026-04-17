@@ -3,7 +3,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import type { ListPostsResponse } from '../types/api.ts';
 
-const API_BASE = import.meta.env.PUBLIC_API_BASE_URL || 'http://localhost:3001';
+// const API_BASE = import.meta.env.PUBLIC_API_BASE_URL || 'http://localhost:3001';
+const API_BASE = import.meta.env.PUBLIC_API_BASE_URL;
 const response = await fetch(`${API_BASE}/api/posts`);
 const data = await response.json();
 const posts = data.posts || [];
